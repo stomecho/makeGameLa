@@ -15,7 +15,7 @@ void setup() {
   size(displayWidth, displayHeight, P3D);
   guimSetup();
   pictureSetup();
-  howTo = loadImage("images/howto.png");
+  howTo = loadImage("/data/images/howto.png");
   noStroke();
   s = width / map.length ;
   reset();

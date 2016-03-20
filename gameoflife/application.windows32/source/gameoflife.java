@@ -31,7 +31,7 @@ public void setup() {
   
   guimSetup();
   pictureSetup();
-  howTo = loadImage("images/howto.png");
+  howTo = loadImage("/data/images/howto.png");
   noStroke();
   s = width / map.length ;
   reset();
@@ -690,10 +690,10 @@ public void pictureSetup(){
       {1, 0, 0, 0, 0}, 
       {0, 1, 0, 0, 1}, 
     }),
-    new picture("shooter",imageCell(loadImage("images/shooter.png"),36,9)),
-    new picture("hackathon",true,imageCell(loadImage("images/hackathon.png"),80,80)),
-    new picture("yawmin",true,imageCell(loadImage("images/yawmin.png"),80,80)),
-    new picture("andyChen",true,imageCell(loadImage("images/andyChen.png"),80,80)),
+    new picture("shooter",imageCell(loadImage("/data/images/shooter.png"),36,9)),
+    new picture("hackathon",true,imageCell(loadImage("/data/images/hackathon.png"),80,80)),
+    new picture("yawmin",true,imageCell(loadImage("/data/images/yawmin.png"),80,80)),
+    new picture("andyChen",true,imageCell(loadImage("/data/images/andyChen.png"),80,80)),
   };
 }
 
