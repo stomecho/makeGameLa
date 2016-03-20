@@ -10,6 +10,14 @@ void keyBoard() {
     if (keyPress.hasValue('a'-32)) cx-=2; 
     if (keyPress.hasValue('d'-32)) cx+=2;
     if (keyPress.hasValue('h'-32)) howToLife=40;
+    if (keyPress.hasValue(133))depthViewY-=0.008;
+    if (keyPress.hasValue(130))depthViewY+=0.008;
+    if (keyPress.hasValue(129))depthViewX-=0.008;
+    if (keyPress.hasValue(131))depthViewX+=0.008;
+    if(depthViewY>0.15) depthViewY=0.15;
+    if(depthViewY<0.05) depthViewY=0.05;
+    if(depthViewX>0.1) depthViewX=0.1;
+    if(depthViewX<-0.1) depthViewX=-0.1;
   }
   /*
   for (int i : keyPress)print(i+" ");
@@ -18,6 +26,9 @@ void keyBoard() {
 
 void keyPressed() {
   if (!keyPress.hasValue(keyCode)) keyPress.append(keyCode);
+  
+  
+  
   if (typeMode) {
     mainChar = key;
   }else if(keyPress.hasValue('q'-32)) tracker();
@@ -40,11 +51,7 @@ void keyPressed() {
   if (!typeMode && keyCode=='o'-32) debug = !debug;
   if (!typeMode && keyCode=='p'-32) enable3D =!enable3D;
   if (!typeMode && keyCode=='v'-32) videoMode =!videoMode;
-  
-  if (keyCode==130) depthViewY+=0.02;
-  if (keyCode==132) depthViewY-=0.02;
-  if(depthViewY>0.4) depthViewY=0.4;
-  if(depthViewY<0) depthViewY = 0;
+  if(enable3D && keyCode==137) autoRotateMode=!autoRotateMode;
   println(keyCode);
 }
 

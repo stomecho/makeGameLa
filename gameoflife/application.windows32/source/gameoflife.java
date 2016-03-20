@@ -24,7 +24,7 @@ boolean press;
 int sleepTime = 4;
 boolean showSelect = false;
 PImage howTo;
-int howToLife = 200;
+int howToLife = 0;
 
 slowProcessor lifeChanger = new slowProcessor();
 public void setup() {
@@ -624,6 +624,14 @@ public void keyBoard() {
     if (keyPress.hasValue('a'-32)) cx-=2; 
     if (keyPress.hasValue('d'-32)) cx+=2;
     if (keyPress.hasValue('h'-32)) howToLife=40;
+    if (keyPress.hasValue(133))depthViewY+=0.008f;
+    if (keyPress.hasValue(130))depthViewY-=0.008f;
+    if (keyPress.hasValue(129))depthViewX-=0.008f;
+    if (keyPress.hasValue(131))depthViewX+=0.008f;
+    if(depthViewY>0.4f) depthViewY=0.4f;
+    if(depthViewY<0.2f) depthViewY=0.2f;
+    if(depthViewX>0.4f) depthViewY=0.4f;
+    if(depthViewX<-0.4f) depthViewY=-0.4f;
   }
   /*
   for (int i : keyPress)print(i+" ");
@@ -654,11 +662,7 @@ public void keyPressed() {
   if (!typeMode && keyCode=='o'-32) debug = !debug;
   if (!typeMode && keyCode=='p'-32) enable3D =!enable3D;
   if (!typeMode && keyCode=='v'-32) videoMode =!videoMode;
-  
-  if (keyCode==130) depthViewY+=0.02f;
-  if (keyCode==132) depthViewY-=0.02f;
-  if(depthViewY>0.4f) depthViewY=0.4f;
-  if(depthViewY<0) depthViewY = 0;
+  if(enable3D && keyCode==137) autoRotateMode=!autoRotateMode;
   println(keyCode);
 }
 
@@ -786,6 +790,9 @@ float depthView = 0;
 boolean enable3D = false;
 
 float depthViewY = 0.1f;
+float depthViewX = 0.1f;
+
+boolean autoRotateMode = false;
 public void render() {
   pushMatrix();
   //fill(0,192);
@@ -793,11 +800,12 @@ public void render() {
   translate(width*0.5f-cx*s, height*0.5f-cy*s);
   if (enable3D) depthView+=(10-depthView)*0.2f;
   else depthView+= (0-depthView)*0.2f;
-
+  if(autoRotateMode)depthViewX = cos(t*0.01f)*0.1f;
+  
   if (depthView>=0.1f) {
     
     rotateX(depthView*depthViewY);
-    rotateZ(depthView*0.02f+depthView*cos(t*0.01f)*0.1f);
+    rotateZ(depthView*depthViewX);
   }
   translate(-s*map.length*0.5f, -s*map[0].length*0.5f);
   background(0);
@@ -1126,31 +1134,7 @@ int[][][] type = new int[][][]{
     {1, 1, 1, 1, 1}, 
   }
 };
-/*import gab.opencv.*;
-import processing.video.*;
-import java.awt.*;
-Capture video;
-OpenCV opencv;
 
-PImage img;
-Eye right,left;
-float t=0,rx,ry;
-float lx,ly,dist;
-void videoSetup(){
-  size(displayWidth,displayHeight,P3D);
-  //orientation(LANDSCAPE);
-  img = loadImage("face.png");
-  video = new Capture(this, 640, 480);
-  opencv = new OpenCV(this, 640, 480);
-  opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);  
-  video.start();
-}
-
-int count=0;
-void videoDraw(){
-  opencv.loadImage(video);
-  image(img,0,0,displayWidth,displayHeight);
-}*/
   public void settings() {  size(displayWidth, displayHeight, P3D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "--present", "--window-color=#666666", "--hide-stop", "gameoflife" };

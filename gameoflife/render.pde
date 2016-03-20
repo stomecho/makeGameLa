@@ -4,6 +4,9 @@ float depthView = 0;
 boolean enable3D = false;
 
 float depthViewY = 0.1;
+float depthViewX = 0.1;
+
+boolean autoRotateMode = false;
 void render() {
   pushMatrix();
   //fill(0,192);
@@ -11,11 +14,13 @@ void render() {
   translate(width*0.5-cx*s, height*0.5-cy*s);
   if (enable3D) depthView+=(10-depthView)*0.2;
   else depthView+= (0-depthView)*0.2;
-
+  
+  if(autoRotateMode)depthViewX = cos(t*0.01)*0.1;
+  
   if (depthView>=0.1) {
     
     rotateX(depthView*depthViewY);
-    rotateZ(depthView*0.02+depthView*cos(t*0.01)*0.1);
+    rotateZ(depthView*depthViewX);
   }
   translate(-s*map.length*0.5, -s*map[0].length*0.5);
   background(0);

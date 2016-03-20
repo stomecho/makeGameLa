@@ -8,14 +8,14 @@ boolean press;
 int sleepTime = 4;
 boolean showSelect = false;
 PImage howTo;
-int howToLife = 200;
+int howToLife = 0;
 
 slowProcessor lifeChanger = new slowProcessor();
 void setup() {
   size(displayWidth, displayHeight, P3D);
   guimSetup();
   pictureSetup();
-  //videoSetup();
+  videoSetup();
   howTo = loadImage("/data/images/howto.png");
   noStroke();
   s = width / map.length ;
@@ -97,7 +97,7 @@ void draw() {
     image(howTo, 0, howToY, width, 768*width/1920);
   }
   t++;
-  //videoDraw();
+  videoDraw();
 }
 
 int howToY = height;

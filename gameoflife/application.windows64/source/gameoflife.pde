@@ -8,7 +8,7 @@ boolean press;
 int sleepTime = 4;
 boolean showSelect = false;
 PImage howTo;
-int howToLife = 200;
+int howToLife = 0;
 
 slowProcessor lifeChanger = new slowProcessor();
 void setup() {
