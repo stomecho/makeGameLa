@@ -1,5 +1,5 @@
 float cx, cy;
-
+float ts = 2;
 float s = 2;
 int t=0;
 
@@ -15,6 +15,7 @@ void setup() {
   size(displayWidth, displayHeight, P3D);
   guimSetup();
   pictureSetup();
+  //videoSetup();
   howTo = loadImage("/data/images/howto.png");
   noStroke();
   s = width / map.length ;
@@ -29,12 +30,12 @@ void setup() {
   );
 
   updateGameOfLife();
-  cx = -width*0.5/s;
-  cy = -height*0.5/s;
+  cx = 0;
+  cy = 0;
 }
 boolean set = true;
 void draw() {
-  
+  s+=(ts-s)*0.2;
   boolean stop =false;
   int x = recalcX(mouseX);
   int y = recalcY(mouseY);
@@ -63,8 +64,8 @@ void draw() {
       }
       showSelect = true;
     } else if (press && keyPress.hasValue(32)) {
-      cx-=(pmouseX-mouseX)/s;
-      cy-=(pmouseY-mouseY)/s;
+      cx+=(pmouseX-mouseX)/s;
+      cy+=(pmouseY-mouseY)/s;
     } else if (! keyPress.hasValue(32)) {
       showSelect = false;
       if (xyOk(x, y))
@@ -78,11 +79,10 @@ void draw() {
   if (!stop) {
     //tracker();
     if (run) {
-      noCursor();
       for (int i=0; i<1; i++)
       updateGameOfLife();
         //lifeChanger.update();
-    } else cursor();
+    }
   }
   noStroke();
   keyBoard();
@@ -92,11 +92,12 @@ void draw() {
   howToLife--;
 
   if (howToLife>0) {
-    if (howToLife>20)howToY += (height-768*width/1920-howToY)*0.1;
-    else  howToY += (height-howToY)*0.1;
+    if (howToLife>20)howToY += (height-768*width/1920-howToY)*0.2;
+    else  howToY += (height-howToY)*0.2;
     image(howTo, 0, howToY, width, 768*width/1920);
   }
   t++;
+  //videoDraw();
 }
 
 int howToY = height;
@@ -104,12 +105,12 @@ int howToY = height;
 void reset() {
   int w = map.length;
   int h = map[0].length;
-  for (int i=0; i<w; i++) for (int j=0; j<h; j++) map[i][j] = random(1)<0;
+  for (int i=0; i<w; i++) for (int j=0; j<h; j++) map[i][j] = random(1)<0.0;
   /*
   for (int i=0; i<10; i++)
    paint(glider2, (int)random(10, 500), (int)random(10, 500));*/
 }
 
 boolean xyOk(int x, int y) {
-  return 0<=x&&x<map.length&&0<=y&&y<map[0].length;
+  return 0<=x && x<map.length && 0<=y && y<map[0].length;
 }

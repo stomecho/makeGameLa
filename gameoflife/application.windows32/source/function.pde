@@ -14,16 +14,16 @@ void prepaint(picture p, int x, int y) {
 }
 
 boolean[][] paint(boolean[][] map, picture p, int x, int y, boolean setSleep, boolean mode) {
-  if (p==null) return null;
+  if (p==null) return map;
   int[][] image = p.data;
-  if (image==null) return null;
+  if (image==null) return map;
   for (int i=0; i<image.length; i++) {
     for (int j=0; j<image[0].length; j++) {
       int nx = matx(i, j, mats[dir])+x;
       int ny = maty(i, j, mats[dir])+y;
       if (0<=nx&&nx<map.length&&0<=ny&&ny<map[0].length) {
         if (image[i][j]==0) continue;
-        map[nx][ny] = fillMode;
+        map[nx][ny] = fillMode || !setSleep;
         if(mode) n[nx][ny]=2;
         if(setSleep)
         for (int xx=nx-1; xx<=nx+1; xx++)for (int yy=ny-1; yy<=ny+1; yy++) {

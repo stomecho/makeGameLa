@@ -1,3 +1,5 @@
+
+
 class singleLifeBlock {
   int ex, ey;
   int sx, sy;
@@ -84,7 +86,7 @@ class singleLifeBlock {
 
 
       if (changed)sleep[i][j] = 0;
-      else if (sleep[i][j]<sleepTime)sleep[i][j] ++;
+      else if (sleep[i][j]<=sleepTime)sleep[i][j] ++;
 
       if (changed)
         for (int xx=i-1; xx<=i+1; xx++)for (int yy=j-1; yy<=j+1; yy++) {

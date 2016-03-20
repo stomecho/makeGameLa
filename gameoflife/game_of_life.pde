@@ -1,12 +1,12 @@
-boolean[][] map = new boolean[300][300];
-boolean[][] prelook = new boolean[300][300];
+boolean[][] map = new boolean[500][300];
+boolean[][] prelook = new boolean[500][300];
 
 int[][] sleep;
 int[][] done;
 int[][] ex, ey;
 int[][] sx, sy;
 int[][] n;
-int b = 60;
+int b = 50;
 
 ArrayList<singleLifeBlock> blocks = new ArrayList<singleLifeBlock>();
 void initGameOfLife(){
@@ -36,4 +36,6 @@ void updateGameOfLife() {
   fill(0);
   for (int i=0; i<w; i++) for (int j=0; j<h; j++) text(n[i][j], i*s+s*0.5,j*s+s*0.5);*/
   for(singleLifeBlock sb : blocks) sb.update();
+  
+  if(t%100==0)System.gc();
 }

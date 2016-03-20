@@ -1,15 +1,15 @@
-int recalcX(int x){
-  return (int)((x-width*0.5-cx*s)/s);
-}
-
-int recalcY(int y){
-  return (int)((y-height*0.5-cy*s)/s);
-}
-
 int calcX(int x){
-  return (int)(x*s+cx*s+width*0.5);
+  return (int)((x-cx)*s+width*0.5);
 }
 
 int calcY(int y){
-  return (int)(y*s+cy*s+height*0.5);
+  return (int)((y-cy)*s+height*0.5);
+}
+
+int recalcX(int x){
+  return (int)((x-width*0.5)/s+cx+(map.length)*0.5);
+}
+
+int recalcY(int y){
+  return (int)((y-height*0.5)/s+cy+(map[0].length)*0.5);
 }

@@ -15,7 +15,7 @@ import java.io.IOException;
 public class gameoflife extends PApplet {
 
 float cx, cy;
-
+float ts = 2;
 float s = 2;
 int t=0;
 
@@ -31,6 +31,7 @@ public void setup() {
   
   guimSetup();
   pictureSetup();
+  //videoSetup();
   howTo = loadImage("/data/images/howto.png");
   noStroke();
   s = width / map.length ;
@@ -45,12 +46,12 @@ public void setup() {
   );
 
   updateGameOfLife();
-  cx = -width*0.5f/s;
-  cy = -height*0.5f/s;
+  cx = 0;
+  cy = 0;
 }
 boolean set = true;
 public void draw() {
-  
+  s+=(ts-s)*0.2f;
   boolean stop =false;
   int x = recalcX(mouseX);
   int y = recalcY(mouseY);
@@ -79,8 +80,8 @@ public void draw() {
       }
       showSelect = true;
     } else if (press && keyPress.hasValue(32)) {
-      cx-=(pmouseX-mouseX)/s;
-      cy-=(pmouseY-mouseY)/s;
+      cx+=(pmouseX-mouseX)/s;
+      cy+=(pmouseY-mouseY)/s;
     } else if (! keyPress.hasValue(32)) {
       showSelect = false;
       if (xyOk(x, y))
@@ -94,11 +95,10 @@ public void draw() {
   if (!stop) {
     //tracker();
     if (run) {
-      noCursor();
       for (int i=0; i<1; i++)
       updateGameOfLife();
         //lifeChanger.update();
-    } else cursor();
+    }
   }
   noStroke();
   keyBoard();
@@ -108,11 +108,12 @@ public void draw() {
   howToLife--;
 
   if (howToLife>0) {
-    if (howToLife>20)howToY += (height-768*width/1920-howToY)*0.1f;
-    else  howToY += (height-howToY)*0.1f;
+    if (howToLife>20)howToY += (height-768*width/1920-howToY)*0.2f;
+    else  howToY += (height-howToY)*0.2f;
     image(howTo, 0, howToY, width, 768*width/1920);
   }
   t++;
+  //videoDraw();
 }
 
 int howToY = height;
@@ -120,14 +121,14 @@ int howToY = height;
 public void reset() {
   int w = map.length;
   int h = map[0].length;
-  for (int i=0; i<w; i++) for (int j=0; j<h; j++) map[i][j] = random(1)<0;
+  for (int i=0; i<w; i++) for (int j=0; j<h; j++) map[i][j] = random(1)<0.0f;
   /*
   for (int i=0; i<10; i++)
    paint(glider2, (int)random(10, 500), (int)random(10, 500));*/
 }
 
 public boolean xyOk(int x, int y) {
-  return 0<=x&&x<map.length&&0<=y&&y<map[0].length;
+  return 0<=x && x<map.length && 0<=y && y<map[0].length;
 }
 GuimPlat plat;
 GuimMouseArg mouseArgs;
@@ -208,6 +209,8 @@ public void guimDraw(){
   plat.mouseEvent.process(plat, mouseArgs);
   mouseArgs.end();
 }
+
+
 class singleLifeBlock {
   int ex, ey;
   int sx, sy;
@@ -294,7 +297,7 @@ class singleLifeBlock {
 
 
       if (changed)sleep[i][j] = 0;
-      else if (sleep[i][j]<sleepTime)sleep[i][j] ++;
+      else if (sleep[i][j]<=sleepTime)sleep[i][j] ++;
 
       if (changed)
         for (int xx=i-1; xx<=i+1; xx++)for (int yy=j-1; yy<=j+1; yy++) {
@@ -336,16 +339,16 @@ public void prepaint(picture p, int x, int y) {
 }
 
 public boolean[][] paint(boolean[][] map, picture p, int x, int y, boolean setSleep, boolean mode) {
-  if (p==null) return null;
+  if (p==null) return map;
   int[][] image = p.data;
-  if (image==null) return null;
+  if (image==null) return map;
   for (int i=0; i<image.length; i++) {
     for (int j=0; j<image[0].length; j++) {
       int nx = matx(i, j, mats[dir])+x;
       int ny = maty(i, j, mats[dir])+y;
       if (0<=nx&&nx<map.length&&0<=ny&&ny<map[0].length) {
         if (image[i][j]==0) continue;
-        map[nx][ny] = fillMode;
+        map[nx][ny] = fillMode || !setSleep;
         if(mode) n[nx][ny]=2;
         if(setSleep)
         for (int xx=nx-1; xx<=nx+1; xx++)for (int yy=ny-1; yy<=ny+1; yy++) {
@@ -374,15 +377,15 @@ void prepaint(picture p, int x, int y) {
     }
   }
 }*/
-boolean[][] map = new boolean[300][300];
-boolean[][] prelook = new boolean[300][300];
+boolean[][] map = new boolean[500][300];
+boolean[][] prelook = new boolean[500][300];
 
 int[][] sleep;
 int[][] done;
 int[][] ex, ey;
 int[][] sx, sy;
 int[][] n;
-int b = 60;
+int b = 50;
 
 ArrayList<singleLifeBlock> blocks = new ArrayList<singleLifeBlock>();
 public void initGameOfLife(){
@@ -412,6 +415,8 @@ public void updateGameOfLife() {
   fill(0);
   for (int i=0; i<w; i++) for (int j=0; j<h; j++) text(n[i][j], i*s+s*0.5,j*s+s*0.5);*/
   for(singleLifeBlock sb : blocks) sb.update();
+  
+  if(t%100==0)System.gc();
 }
 class GuimBtn extends GuimPlat {
   String name;
@@ -611,13 +616,13 @@ boolean run = false;
 
 IntList keyPress = new IntList();
 boolean typeMode = false;
-
+boolean videoMode = false;
 public void keyBoard() {
   if (!typeMode) {
-    if (keyPress.hasValue('w'-32)) cy+=1; 
-    if (keyPress.hasValue('s'-32)) cy-=1; 
-    if (keyPress.hasValue('a'-32)) cx+=1; 
-    if (keyPress.hasValue('d'-32)) cx-=1;
+    if (keyPress.hasValue('w'-32)) cy-=2; 
+    if (keyPress.hasValue('s'-32)) cy+=2; 
+    if (keyPress.hasValue('a'-32)) cx-=2; 
+    if (keyPress.hasValue('d'-32)) cx+=2;
     if (keyPress.hasValue('h'-32)) howToLife=40;
   }
   /*
@@ -629,8 +634,7 @@ public void keyPressed() {
   if (!keyPress.hasValue(keyCode)) keyPress.append(keyCode);
   if (typeMode) {
     mainChar = key;
-  }
-
+  }else if(keyPress.hasValue('q'-32)) tracker();
   if (keyCode==10)run = !run;
   if (showSelect && (keyCode==127 || keyCode==147)) deleteSelect();
   if (showSelect && keyCode=='c'-32) copySelect(); 
@@ -647,8 +651,15 @@ public void keyPressed() {
   if (keyCode==RIGHT) if (select+1<patterns.length) select++;
   if (keyCode==DOWN) dir = (dir+1)%4;
   if (keyCode==UP) ShowSaves=!ShowSaves;
-  if (!typeMode && keyCode=='d') debug = !debug;
-
+  if (!typeMode && keyCode=='o'-32) debug = !debug;
+  if (!typeMode && keyCode=='p'-32) enable3D =!enable3D;
+  if (!typeMode && keyCode=='v'-32) videoMode =!videoMode;
+  
+  if (keyCode==130) depthViewY+=0.02f;
+  if (keyCode==132) depthViewY-=0.02f;
+  if(depthViewY>0.4f) depthViewY=0.4f;
+  if(depthViewY<0) depthViewY = 0;
+  println(keyCode);
 }
 
 public void keyReleased() {
@@ -656,8 +667,9 @@ public void keyReleased() {
 }
 
 public void mouseWheel(MouseEvent event) {
-  s /= pow(1.1f, event.getCount());
-  if (s<0.1f) s=0.1f;
+  ts /= pow(1.1f, event.getCount());
+  if (ts<0.1f) ts=0.1f;
+  if (ts>60) ts = 60;
 }
 public int[][] imageCell(PImage p, int w, int h){
   PGraphics g = createGraphics(w, h);
@@ -753,69 +765,92 @@ class picture {
     return this;
   }
 }
-public int recalcX(int x){
-  return (int)((x-width*0.5f-cx*s)/s);
-}
-
-public int recalcY(int y){
-  return (int)((y-height*0.5f-cy*s)/s);
-}
-
 public int calcX(int x){
-  return (int)(x*s+cx*s+width*0.5f);
+  return (int)((x-cx)*s+width*0.5f);
 }
 
 public int calcY(int y){
-  return (int)(y*s+cy*s+height*0.5f);
+  return (int)((y-cy)*s+height*0.5f);
+}
+
+public int recalcX(int x){
+  return (int)((x-width*0.5f)/s+cx+(map.length)*0.5f);
+}
+
+public int recalcY(int y){
+  return (int)((y-height*0.5f)/s+cy+(map[0].length)*0.5f);
 }
 boolean debug = false;
 
-public void render(){
+float depthView = 0;
+boolean enable3D = false;
+
+float depthViewY = 0.1f;
+public void render() {
   pushMatrix();
   //fill(0,192);
   //rect(0,0,width,height);
-  translate(cx*s+width*0.5f, cy*s+height*0.5f);
+  translate(width*0.5f-cx*s, height*0.5f-cy*s);
+  if (enable3D) depthView+=(10-depthView)*0.2f;
+  else depthView+= (0-depthView)*0.2f;
+
+  if (depthView>=0.1f) {
+    
+    rotateX(depthView*depthViewY);
+    rotateZ(depthView*0.02f+depthView*cos(t*0.01f)*0.1f);
+  }
+  translate(-s*map.length*0.5f, -s*map[0].length*0.5f);
   background(0);
   
   for (int i=0; i<map.length; i++) for (int j=0; j<map[0].length; j++) {
     noStroke();
     fill(255);
-    if(map[i][j]) {
-      
+
+    if (map[i][j]) {
+      pushMatrix();
       if (sleep[i][j]>=sleepTime) fill(0, 0, 255);
       else if (sleep[i][j]>sleepTime*0.6f) fill(0, 255, 0);
       else if (sleep[i][j]>sleepTime*0.3f)  fill(255, 0, 0);
       else if (map[i][j]) fill(255);
+
+      if (showSelect && mx<=i&&i<=mex && my<=j && j<=mey) fill(255, 0, 0);
       
-      if(showSelect && mx<=i&&i<=mex && my<=j && j<=mey) fill(255,0,0);
-      
+      if (depthView>=0.5f) {
+        translate(0, 0, n[i][j]*depthView*s);
+        stroke(255);
+        if (i%4==0&&j%4==0)
+          line(i*s+s*0.5f, j*s+s*0.5f, 0, i*s+s*0.5f, j*s+s*0.5f, -sleep[i][j]*depthView*s);
+      }
+      noStroke();
       rect(i*s, j*s, s, s);
+
+      popMatrix();
     }
-    if(prelook[i][j]){
-      fill(0,64);
+
+    if (prelook[i][j]) {
+      fill(0, 64);
       stroke(255);
       rect(i*s, j*s, s, s);
     }
   }
-  
-  if(debug)for(singleLifeBlock b : blocks)b.showGrid();
+
+  if (debug)for (singleLifeBlock b : blocks)b.showGrid();
+
   
   pushStyle();
   noFill();
   stroke(255, 0, 0);
-  if (showSelect)rect(mx*s, my*s, mex*s-mx*s+s, mey*s-my*s+s);
+  if (showSelect)rect(mx*s, my*s, mex*s-mx*s+s, mey*s-my*s+s, depthView);
   stroke(255);
   rect(0, 0, map.length*s, map[0].length*s);
-  popStyle();
-  
+  popStyle(); 
   popMatrix();
   guimDraw();
-  if(!run){
-    fill(255);
-    textSize(16);
-    if(mainPattern!=null)
+  
+  fill(255);
+  textSize(16);
+  if (mainPattern!=null)
     text(mainPattern.name, mouseX-20, mouseY-20);
-  }
 }
 
 class work{
@@ -859,8 +894,9 @@ public void deleteSelect(){
 
 public void copySelect(){
   tracker();
+  copy = new int[mey-my+1][mex-mx+1];
   for(int i=mx; i<=mex; i++) for (int j=my; j<=mey; j++) {
-    if (0<=i&&i<n.length&&0<=j&&j<n[0].length){
+    if (xyOk(i,j)){
       copy[j-my][i-mx] = (map[i][j])?1:0;
     }
   }
@@ -879,15 +915,18 @@ public int[][] selection(){
 public void tracker(){
   int x = mx;
   int y = my;
-  int w = mex-mx;
-  int h = mey-my;
+  int w = mex-mx+1;
+  int h = mey-my+1;
   int ex=x;
   int ey=y;
   int sx=w+x;
   int sy=h+y;
   for (int i=x; i<x+w; i++) for (int j=y; j<y+h; j++) {
     if (0<=i&&i<n.length&&0<=j&&j<n[0].length){
-      if(sx<i&&i<ex)i=ex;
+      if(sx<i&&i<ex&&sy<j&&j<ey){
+        i=ex;
+        j=ey;
+      }
       if (!map[i][j]) continue;
       
       if (i>ex)ex=i;
@@ -896,10 +935,10 @@ public void tracker(){
       if (j<sy)sy=j;
     }
   }
-  mx = sx;
-  my = sy;
-  mex = ex;
-  mey = ey;
+  mx = min(sx,ex);
+  my = min(sy,ey);
+  mex = max(sx,ex);
+  mey = max(sy,ey);
 }
 char mainChar = 'a';
 
@@ -1087,6 +1126,31 @@ int[][][] type = new int[][][]{
     {1, 1, 1, 1, 1}, 
   }
 };
+/*import gab.opencv.*;
+import processing.video.*;
+import java.awt.*;
+Capture video;
+OpenCV opencv;
+
+PImage img;
+Eye right,left;
+float t=0,rx,ry;
+float lx,ly,dist;
+void videoSetup(){
+  size(displayWidth,displayHeight,P3D);
+  //orientation(LANDSCAPE);
+  img = loadImage("face.png");
+  video = new Capture(this, 640, 480);
+  opencv = new OpenCV(this, 640, 480);
+  opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);  
+  video.start();
+}
+
+int count=0;
+void videoDraw(){
+  opencv.loadImage(video);
+  image(img,0,0,displayWidth,displayHeight);
+}*/
   public void settings() {  size(displayWidth, displayHeight, P3D); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "--present", "--window-color=#666666", "--hide-stop", "gameoflife" };
