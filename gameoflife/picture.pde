@@ -18,6 +18,7 @@ void pictureSetup(){
     new picture("hackathon",true,imageCell(loadImage("/data/images/hackathon.png"),80,80)),
     new picture("yawmin",true,imageCell(loadImage("/data/images/yawmin.png"),80,80)),
     new picture("andyChen",true,imageCell(loadImage("/data/images/andyChen.png"),80,80)),
+    new picture("video",true,new int[][]{{0}}),
   };
 }
 

@@ -1,6 +1,5 @@
 int[][] imageCell(PImage p, int w, int h){
   PGraphics g = createGraphics(w, h);
-  g.noSmooth();
   g.beginDraw();
   g.image(p,0,0,w,h);
   g.endDraw();

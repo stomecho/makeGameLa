@@ -8,5 +8,13 @@ void videoSetup(){
 }
 
 void videoDraw(){
-  if(videoMode) paint(new picture("video", imageCell((PImage)video,64,48)),0,0);
+  if(videoMode) {
+    if (video.available() == true) {
+      video.read();
+      int w = 64*4;
+      int h = 48*4;
+      //patterns[7] = new picture("video", true, imageCell(video.get(),64*4,48*4));
+      paint(new picture("video", true, imageCell(video.get(),w,h)),int(map.length-w)/2,int(map[i].length-h)/2 );
+    }
+  }
 }

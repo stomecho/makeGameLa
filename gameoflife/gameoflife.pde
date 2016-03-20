@@ -75,7 +75,7 @@ void draw() {
     }
   }
   press = mousePressed;
-
+  videoDraw();
   if (!stop) {
     //tracker();
     if (run) {
@@ -97,7 +97,7 @@ void draw() {
     image(howTo, 0, howToY, width, 768*width/1920);
   }
   t++;
-  videoDraw();
+  
 }
 
 int howToY = height;
